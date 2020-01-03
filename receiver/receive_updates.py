@@ -42,9 +42,6 @@ def save_new_data(data):
     if data['ok']:
         if data['result']:
             for item in data['result']:
-                print(len(data['result']))
-                print(item['update_id'])
-                print(prev_data['update_id'])
                 if item['update_id'] > prev_data['update_id']:
                     storage = open(storage_config['received']['updates'],'a')
                     storage.write(json.dumps(item)+"\n")
@@ -58,8 +55,6 @@ while True:
     try:
         offset = prev_data['update_id'] if prev_data['update_id'] > 0 else False
         data = get_updates(token_config['bot']['token'], offset)
-        print(prev_data['update_id'])
-        print(data['result'])
         if prev_data['update_id'] == data['result'][-1]['update_id']:
             pass
         else:
@@ -70,6 +65,3 @@ while True:
                     prev_data = data['result'][-1]
     except Exception as e:
         print(e)
-    
-
-
