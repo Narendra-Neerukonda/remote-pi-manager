@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 
 storage/*
+conf/*
 launch.json
 settings.json
