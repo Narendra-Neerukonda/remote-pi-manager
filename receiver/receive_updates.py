@@ -25,7 +25,7 @@ token_config.read(os.path.join(os.path.dirname(__file__),"..","conf","auth.ini")
 
 def get_updates(token, offset=False):
     if not offset:
-        data = requests.get("https://api.telegram.org/bot"+token+"/getUpdates?offset=-1")
+        data = requests.get("https://api.telegram.org/bot"+token+"/getUpdates")
     if offset:
         data = requests.get("https://api.telegram.org/bot"+token+"/getUpdates?offset="+str(offset)+'"')
     data = json.loads(data.text)
@@ -44,6 +44,9 @@ def main(go=True):
             else:
                 if not prev_data['update_id'] == 0:
                     save_new_data(data, prev_data)
+                else:
+                    data['result'].pop(0)
+                    save_new_data(data, prev_data)
                 if data['ok']:
                     if data['result']:
                         prev_data = data['result'][-1]
@@ -52,8 +55,7 @@ def main(go=True):
  
     while not go: # this block is for testing purpose only
         prev_data = json.loads(load_prev_data(storage_config['received']['updates']).strip("\n"))
-        offset = prev_data['update_id'] if prev_data['update_id'] > 0 else False
-        data = get_updates(token_config['bot']['token'], offset)
+        data = get_updates(token_config['bot']['token'], -100)
         save_new_data(data, prev_data)
         return True
 
