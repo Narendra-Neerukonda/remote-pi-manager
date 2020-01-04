@@ -24,4 +24,4 @@ def download_file(file_id):
             for chunk in data.iter_content(chunk_size=512*1024):
                 if chunk:
                     downloading.write(chunk)
-        return "Received file "+str(file_path.split("/")[-1].split(".")[0])
+        return file_path.split("/")[-1]
