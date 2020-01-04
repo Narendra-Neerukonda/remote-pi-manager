@@ -3,6 +3,8 @@ import json
 import configparser
 
 from workflows.command_executor import execute_command
+from workflows.file_downloader import download_file
+
 from responder.messaging import sendtext
 
 
@@ -25,7 +27,19 @@ def parse():
                                 "Responding for command "+str(command[1])+"\n"
                                 + str(response)
                                 )
-            
+                # code block to download voice files
+                if 'voice' in loaded_line['message']:
+                    response = download_file(loaded_line['message']['voice']['file_id'])
+                    sendtext(
+                        "Received file"
+                    )
+                
+                if 'document' in loaded_line['message']:
+                    if "start download" in loaded_line['message']['caption']:
+                        response = download_file(loaded_line['message']['document']['file_id'])
+                        sendtext(
+                            "Received file"
+                        )
 
 
 if __name__=="__main__":
