@@ -25,6 +25,9 @@ def parse_and_execute(go = True):
     if not os.path.isfile(storage_config['processed']['objects']):
         create_processed_file = open(storage_config['processed']['objects'], 'w')
         create_processed_file.close()
+    if not os.path.isfile(storage_config['received']['updates']):
+        create_processed_file = open(storage_config['received']['updates'], 'w')
+        create_processed_file.close()
 
     while go:
         time.sleep(int(timer_config['polling_delay']['time']))
