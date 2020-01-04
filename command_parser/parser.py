@@ -16,6 +16,11 @@ storage_config = configparser.ConfigParser()
 storage_config.read(os.path.join(os.path.dirname(__file__),"..","conf","storage.ini"))
 
 def parse_and_execute(go = True):
+
+    if not os.path.isfile(storage_config['processed']['objects']):
+        create_processed_file = open(storage_config['processed']['objects'], 'w')
+        create_processed_file.close()
+
     while go:
         time.sleep(5)
         with open(storage_config['received']['updates'], 'r') as process_batch, open(storage_config['processed']['objects'], 'r') as processing_complete:
