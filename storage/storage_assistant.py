@@ -12,7 +12,7 @@ def save_new_data(data, prev_data):
         if data['result']:
             for item in data['result']:
                 if item['update_id'] > prev_data['update_id']:
-                    storage = open(storage_config['received']['updates'],'a')
+                    storage = open(storage_config['received']['updates'],'a+')
                     storage.write(json.dumps(item)+"\n")
                     storage.close()
 
