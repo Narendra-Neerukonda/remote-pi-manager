@@ -3,7 +3,7 @@ import requests
 import json
 import time
 import configparser
-
+import logging
 
 from storage.storage_assistant import (
     save_new_data,
@@ -34,18 +34,22 @@ def get_updates(token, offset=False):
 
 def main(go=True):
     prev_data = json.loads(load_prev_data(storage_config['received']['updates']).strip("\n"))
+ 
     while go:  
         time.sleep(int(timer_config['polling_delay']['time']))
         try:
             offset = prev_data['update_id'] if prev_data['update_id'] > 0 else False
             data = get_updates(token_config['bot']['token'], offset)
             if prev_data['update_id'] == data['result'][-1]['update_id']:
+ 
                 pass
             else:
                 if not prev_data['update_id'] == 0:
+ 
                     save_new_data(data, prev_data)
                 else:
                     data['result'].pop(0)
+
                     save_new_data(data, prev_data)
                 if data['ok']:
                     if data['result']:
