@@ -5,6 +5,12 @@ import time
 import configparser
 
 
+from storage.storage_assistant import (
+    save_new_data,
+    load_prev_data
+    )
+
+
 storage_config = configparser.ConfigParser()
 storage_config.read(os.path.join(os.path.dirname(__file__),"..","conf","storage.ini"))
 
@@ -26,42 +32,24 @@ def get_updates(token, offset=False):
     return data
 
 
-def load_prev_data(fpath):
-    if os.path.isfile(fpath) and os.path.getsize(fpath) > 0:
-        prev_data = open(fpath, 'r')
-        last_line = prev_data.readlines()[-1]
-        prev_data.close()
-        return last_line
-    else:
-        return "{\"update_id\":0}"
-
-prev_data = json.loads(load_prev_data(storage_config['received']['updates']).strip("\n"))
-
-
-def save_new_data(data):
-    if data['ok']:
-        if data['result']:
-            for item in data['result']:
-                if item['update_id'] > prev_data['update_id']:
-                    storage = open(storage_config['received']['updates'],'a')
-                    storage.write(json.dumps(item)+"\n")
-                    storage.close()
+def main():
+    prev_data = json.loads(load_prev_data(storage_config['received']['updates']).strip("\n"))
+    while True:  
+        time.sleep(int(timer_config['polling_delay']['time']))
+        try:
+            offset = prev_data['update_id'] if prev_data['update_id'] > 0 else False
+            data = get_updates(token_config['bot']['token'], offset)
+            if prev_data['update_id'] == data['result'][-1]['update_id']:
+                pass
+            else:
+                if not prev_data['update_id'] == 0:
+                    save_new_data(data, prev_data)
+                if data['ok']:
+                    if data['result']:
+                        prev_data = data['result'][-1]
+        except Exception as e:
+            print(e)
 
 
-
-
-while True:  
-    time.sleep(int(timer_config['polling_delay']['time']))
-    try:
-        offset = prev_data['update_id'] if prev_data['update_id'] > 0 else False
-        data = get_updates(token_config['bot']['token'], offset)
-        if prev_data['update_id'] == data['result'][-1]['update_id']:
-            pass
-        else:
-            if not prev_data['update_id'] == 0:
-                save_new_data(data)
-            if data['ok']:
-                if data['result']:
-                    prev_data = data['result'][-1]
-    except Exception as e:
-        print(e)
+if __name__=="__main__":
+    main()
