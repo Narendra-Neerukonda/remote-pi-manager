@@ -49,18 +49,12 @@ def main(go=True):
                         prev_data = data['result'][-1]
         except Exception as e:
             print(e)
-    while not go:
+ 
+    while not go: # this block is for testing purpose only
         prev_data = json.loads(load_prev_data(storage_config['received']['updates']).strip("\n"))
         offset = prev_data['update_id'] if prev_data['update_id'] > 0 else False
         data = get_updates(token_config['bot']['token'], offset)
-        if prev_data['update_id'] == data['result'][-1]['update_id']:
-            pass
-        else:
-            if not prev_data['update_id'] == 0:
-                save_new_data(data, prev_data)
-            if data['ok']:
-                if data['result']:
-                    prev_data = data['result'][-1]
+        save_new_data(data, prev_data)
         return True
 
 if __name__=="__main__":
