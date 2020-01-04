@@ -23,4 +23,10 @@ setuptools.setup(
         "Operating System :: Raspbian",
     ],
     python_requires='>=3.6',
+    entry_points={
+    'console_scripts': [
+        'start_receiver = receiver.receive_updates:main',
+        'start_processor = command_parser.parser:parse_and_execute'
+    ],
+},
 )
