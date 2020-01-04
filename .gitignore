@@ -128,7 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-storage/*
+data_store/*
 conf/*
 launch.json
 settings.json
