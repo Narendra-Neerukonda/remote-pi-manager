@@ -15,6 +15,11 @@ from responder.messaging import sendtext
 storage_config = configparser.ConfigParser()
 storage_config.read(os.path.join(os.path.dirname(__file__),"..","conf","storage.ini"))
 
+
+timer_config = configparser.ConfigParser()
+timer_config.read(os.path.join(os.path.dirname(__file__),"..","conf","timing.ini"))
+
+
 def parse_and_execute(go = True):
 
     if not os.path.isfile(storage_config['processed']['objects']):
@@ -22,7 +27,7 @@ def parse_and_execute(go = True):
         create_processed_file.close()
 
     while go:
-        time.sleep(5)
+        time.sleep(int(timer_config['polling_delay']['time']))
         with open(storage_config['received']['updates'], 'r') as process_batch, open(storage_config['processed']['objects'], 'r') as processing_complete:
             to_be_processed = [item for item in process_batch if item not in processing_complete]
             for line in to_be_processed:
