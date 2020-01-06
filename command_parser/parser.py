@@ -7,7 +7,7 @@ import time
 from workflows.command_executor import execute_command
 from workflows.file_downloader import download_file
 from workflows.torrent_downloader import start_torrent_data_download
-
+from workflows.weather_telemetry import weather_requirement
 
 from responder.messaging import sendtext
 
@@ -47,6 +47,14 @@ def parse_and_execute(go = True):
                                     "Responding for command "+str(command[1])+"\n"
                                     + str(response)
                                     )
+                    
+                    #code block to provide weather service
+                    if 'text' in loaded_line['message']:
+                        if "weather" == loaded_line['message']['text'].strip().lower():
+                            sendtext(
+                                str("".join([key+" : "+str(value)+"\n" for key,value in weather_requirement().items()]))
+                            )
+
                     # code block to download voice files
                     if 'voice' in loaded_line['message']:
                         response = download_file(loaded_line['message']['voice']['file_id'])
@@ -65,6 +73,8 @@ def parse_and_execute(go = True):
                             sendtext(
                                 torrent_response
                             )
+                    
+
                 with open(storage_config['processed']['objects'],'a+') as processed_objects:
                     processed_objects.write(line)
 
