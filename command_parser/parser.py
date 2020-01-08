@@ -9,7 +9,10 @@ from workflows.file_downloader import download_file
 from workflows.torrent_downloader import start_torrent_data_download
 from workflows.weather_telemetry import weather_requirement
 
-from responder.messaging import sendtext
+from responder.messaging import (
+    sendtext,
+    send_image
+    )
 
 
 storage_config = configparser.ConfigParser()
@@ -52,8 +55,11 @@ def parse_and_execute(go = True):
                     if 'text' in loaded_line['message']:
                         if "weather" == loaded_line['message']['text'].strip().lower():
                             sendtext(
-                                str("".join([key+" : "+str(value)+"\n" for key,value in weather_requirement().items()]))
+                                str("".join([key+" : "+str(value)+"\n" for key,value in weather_requirement("").items()]))
                             )
+
+                        if "weather " in loaded_line['message']['text'].strip().lower():
+                            weather_requirement(loaded_line['message']['text'].split(" ")[-1])
 
                     # code block to download voice files
                     if 'voice' in loaded_line['message']:
