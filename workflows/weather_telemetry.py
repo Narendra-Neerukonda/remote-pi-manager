@@ -6,11 +6,24 @@ import json
 import requests
 
 
+from responder.messaging import send_image
+
+
 auth_config = configparser.ConfigParser()
 auth_config.read(os.path.join(os.path.dirname(__file__),"..","conf","auth.ini"))
 
 
+location_config = configparser.ConfigParser()
+location_config.read(os.path.join(os.path.dirname(__file__), "..", "conf", "weather.ini"))
+
+
+storage_config = configparser.ConfigParser()
+storage_config.read(os.path.join(os.path.dirname(__file__),"..","conf","storage.ini"))
+
+
 def get_weather_data(city_id, api_key):
+
+    #open weather map
 
     url = "http://api.openweathermap.org/data/2.5/weather"
     querystring = {"id":city_id,"appid":api_key}
@@ -22,6 +35,9 @@ def get_weather_data(city_id, api_key):
     return data
 
 def get_comfort_level(data):
+
+    #open weather map
+
     weather = data['weather']
 
     comfort_level = {}
@@ -42,6 +58,22 @@ def get_comfort_level(data):
 
     return comfort_level
 
-def weather_requirement():
-    return get_comfort_level(get_weather_data("1277333", auth_config['weather']['api_key']))
 
+def get_yrno_weather_data(location):
+    print(location_config['yr.no'][location])
+    url = "https://www.yr.no/place/"+location_config['yr.no'][location]+"/avansert_meteogram.png"
+    
+    import urllib.request
+
+    urllib.request.urlretrieve(url, storage_config['received']['downloads']+"/latest.png")
+
+
+
+def weather_requirement(location="bangalore"):
+
+    #open weather requirement
+    if location == "":
+        return get_comfort_level(get_weather_data("1277333", auth_config['weather']['api_key']))
+
+    get_yrno_weather_data(location.lower())
+    send_image(storage_config['received']['downloads']+"/latest.png")
