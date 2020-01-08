@@ -41,11 +41,9 @@ def main(go=True):
             offset = prev_data['update_id'] if prev_data['update_id'] > 0 else False
             data = get_updates(token_config['bot']['token'], offset)
             if prev_data['update_id'] == data['result'][-1]['update_id']:
- 
                 pass
             else:
                 if not prev_data['update_id'] == 0:
- 
                     save_new_data(data, prev_data)
                 else:
                     data['result'].pop(0)
