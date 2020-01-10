@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import configparser
 import json
@@ -6,7 +8,7 @@ import json
 import requests
 
 
-from responder.messaging import send_image
+from responder.messaging import send_image, sendtext
 
 
 auth_config = configparser.ConfigParser()
@@ -60,14 +62,18 @@ def get_comfort_level(data):
 
 
 def get_yrno_weather_data(location):
-    print(location_config['yr.no'][location])
-    url = "https://www.yr.no/place/"+location_config['yr.no'][location]+"/avansert_meteogram.png"
-    
-    import urllib.request
-
-    urllib.request.urlretrieve(url, storage_config['received']['downloads']+"/latest.png")
-
-
+    try:
+        url = "https://www.yr.no/place/"+location_config['yr.no'][location]+"/avansert_meteogram.png"
+        
+        import urllib.request
+        try:
+            urllib.request.urlretrieve(url, storage_config['received']['downloads']+"/latest.png")
+            return True
+        except Exception as e:
+            sendtext(str(e))
+            return False
+    except KeyError:
+        return False
 
 def weather_requirement(location="bangalore"):
 
@@ -75,5 +81,5 @@ def weather_requirement(location="bangalore"):
     if location == "":
         return get_comfort_level(get_weather_data("1277333", auth_config['weather']['api_key']))
 
-    get_yrno_weather_data(location.lower())
-    send_image(storage_config['received']['downloads']+"/latest.png")
+    if get_yrno_weather_data(location.lower()):
+        send_image(storage_config['received']['downloads']+"/latest.png")
