@@ -44,7 +44,7 @@ def parse_and_execute(go = True):
                     if 'text' in loaded_line['message']:
                         if 'command' in loaded_line['message']['text']:
                             command = loaded_line['message']['text'].split(':')
-                            if len(command) > 1:
+                            if len(command) > 1 and "reboot" not in command and "init 6" not in command:
                                 response = execute_command(command[1])
                                 sendtext(
                                     "Responding for command "+str(command[1])+"\n"
